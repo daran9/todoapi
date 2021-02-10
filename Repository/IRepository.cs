@@ -1,5 +1,6 @@
 using System;   
-   
+using System.Threading.Tasks;
+
 namespace TodoApi.Repository
 {
     public interface IRepository<TEntity> where TEntity : class
@@ -11,5 +12,9 @@ namespace TodoApi.Repository
         void Delete(TEntity entity);
 
         void Update(TEntity entity);
+
+        void Insert();
+
+        Task<TEntity> GetAsync();
     }
 }
