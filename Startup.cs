@@ -10,30 +10,48 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
-using TodoApi.Models;
 using TodoApi.Repository;
 using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 
 namespace TodoApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
+
+        private IWebHostEnvironment Environment{ get; }
+
+        private const string HttpHostDockerInternal = "http://localstack:4566";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
+            //services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
             services.AddControllers();
 
-            services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
-            services.AddAWSService<IAmazonDynamoDB>();
-            services.AddTransient<IRepository<Item>, DynamoDbRepo>();
+            if(Environment.IsDevelopment())
+            {
+                services.AddSingleton<IAmazonDynamoDB>(sp =>
+                {   
+                    var clientConfig = new AmazonDynamoDBConfig{ ServiceURL = HttpHostDockerInternal };
+                    return new AmazonDynamoDBClient(clientConfig);
+                });
+
+            }else
+            {
+                services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
+                services.AddAWSService<IAmazonDynamoDB>();
+            }
+
+            services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
+            services.AddTransient<ITodoItemRepository, DynamoDBTodoItemRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

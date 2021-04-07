@@ -8,9 +8,11 @@ services:
        - "4566:4566"
        - "9001:9000"
       environment:
-       - SERVICES=dynamodb
+       - SERVICES=dynamodb,iam
        - DEBUG=1
-       - DEFAULT_REGION=us-east-1
+       - AWS_ACCESS_KEY_ID=xxx
+       - AWS_SECRET_ACCESS_KEY=xxx
+       - DEFAULT_REGION=eu-west-1
        - PORT_WEB_UI=9000
        - DOCKER_HOST=unix:///var/run/docker.sock
       volumes:
@@ -24,6 +26,9 @@ services:
       ports:
         - "8001:8001"
       environment:
+        - AWS_ACCESS_KEY_ID=xxx
+        - AWS_SECRET_KEY=xxx
+        - AWS_DEFAULT_REGION=eu-west-1
         - "DYNAMO_ENDPOINT=http://localstack:4566"
       networks:
         - overlay
@@ -32,6 +37,11 @@ services:
       build: .
       ports:
         - "8080:80"
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - AWS_ACCESS_KEY_ID=xxx
+        - AWS_SECRET_KEY=xxx
+        - AWS_DEFAULT_REGION=eu-west-1
       networks:
         - overlay
 
