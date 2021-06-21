@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.EntityFrameworkCore;
 using TodoApi.Repository;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Serilog;
 
 namespace TodoApi
 {
@@ -76,7 +70,7 @@ namespace TodoApi
                 endpoints.MapHealthChecks("/health");
             });
 
-            //app.UseSerilogRequestLogging();
+            app.UseSerilogRequestLogging();
         }
     }
 }

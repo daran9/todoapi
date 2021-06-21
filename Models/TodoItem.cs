@@ -1,5 +1,3 @@
-using Amazon.DynamoDBv2.DataModel;
-
 namespace TodoApi.Models
 {
     public class TodoItem
