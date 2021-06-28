@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TodoApi.Repository;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Serilog;
+using MediatR;
+using TodoApi.Domain.Repository;
 
 namespace TodoApi
 {
@@ -49,6 +50,8 @@ namespace TodoApi
 
             services.AddHealthChecks()
                 .AddCheck<TodoHealthCheck>("todo_health_check");
+
+            services.AddMediatR(typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

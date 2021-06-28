@@ -1,82 +1,81 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using TodoApi.Repository;
 using System.Threading.Tasks;
+using TodoApi.Models;
+using MediatR;
+using TodoApi.Domain.Commands;
+using TodoApi.Domain.Queries;
 
 namespace TodoApi.Controllers
 {
     [Route("api/[controller]")]
     public class TodoController : Controller
     {
-        private readonly ITodoItemRepository _repository;
+        private readonly IMediator _mediator;
 
-        public TodoController(ITodoItemRepository repository)
+        public TodoController(IMediator mediator)
         {
-            _repository = repository;
+            _mediator = mediator;
         } 
 
         [HttpGet]
-        public async IAsyncEnumerable<Models.TodoItem> GetAll()
+        public async IAsyncEnumerable<Models.TodoItemResponse> GetAll()
         {
-            var items = await _repository.GetAllAsync();
+            var todoCommand = new GetTodoListQuery();
+            var items = await _mediator.Send(todoCommand);
             
             foreach (var item in items)
             {
-                yield return new Models.TodoItem(){
-                    Id = item.Id,
-                    Name = item.Name,
-                    IsComplete = item.IsComplete
-                };
+                yield return item.ToResponse();
             }
         }
 
         [HttpGet("{id}", Name = "GetTodo")]
-        public async Task<IActionResult> GetById(long id)
+        public async Task<ActionResult<Models.TodoItemResponse>> GetById(long id)
         {
-            var item = await _repository.GetByIdAsync(id);
+            var todoCommand = new GetTodoQuery(){Id = id};
+            var item = await _mediator.Send(todoCommand);
             if (item == null)
             {
                 return NotFound();
             }
-            return new ObjectResult(new Models.TodoItem(){
-                Id = item.Id,
-                Name = item.Name,
-                IsComplete = item.IsComplete
-            });
+            return item.ToResponse();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Models.TodoItem item)
+        public async Task<IActionResult> Create([FromBody] TodoItemRequest itemRequest)
         {
-            var todoItem = new TodoItem(){
-                Id = item.Id,
+            var todoCommand = new CreateTodoCommand(){
+                Id = itemRequest.Id,
                 Type = "Note",
-                Name = item.Name,
-                IsComplete = item.IsComplete
+                Name = itemRequest.Name,
+                IsComplete = itemRequest.IsComplete
             };
-            await _repository.CreateAsync(todoItem);
+ 
+            var item = await _mediator.Send(todoCommand);
 
-            return CreatedAtRoute("GetTodo", new { id = todoItem.Id }, item);
+            return CreatedAtRoute("GetTodo", new { id = todoCommand.Id }, item.ToResponse());
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, [FromBody] Models.TodoItem item)
+        public async Task<IActionResult> Update(long id, [FromBody] TodoItemRequest itemRequest)
         {
-            var todoItem = new TodoItem(){
-                Id = item.Id,
+            var todoCommand = new UpdateTodoCommand(){
+                Id = itemRequest.Id,
                 Type = "Note",
-                Name = item.Name,
-                IsComplete = item.IsComplete
+                Name = itemRequest.Name,
+                IsComplete = itemRequest.IsComplete
             };
 
-            await _repository.Update(id, todoItem);
+            await _mediator.Send(todoCommand);
             return new NoContentResult();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {
-            await _repository.Delete(id);
+            var todoCommand = new DeleteTodoCommand(){Id = id};
+            await _mediator.Send(todoCommand);
             return new NoContentResult();
         }
     }

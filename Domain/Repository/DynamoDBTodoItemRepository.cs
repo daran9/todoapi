@@ -4,28 +4,28 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
-namespace TodoApi.Repository
+namespace TodoApi.Domain.Repository
 {
-    public class DynamoDBTodoItemRepository: ITodoItemRepository
+    public class DynamoDBTodoItemRepository : ITodoItemRepository
     {
         private const string NOTE = "Note";
         IDynamoDBContext _context;
         private readonly ILogger<DynamoDBTodoItemRepository> _logger;
-        
+
         public DynamoDBTodoItemRepository(IDynamoDBContext context, ILogger<DynamoDBTodoItemRepository> logger)
         {
             _context = context;
             _logger = logger;
         }
 
-        public async Task<TodoItem> GetByIdAsync(long id, string type = NOTE)
+        public async Task<TodoItemEntity> GetByIdAsync(long id, string type = NOTE)
         {
             _logger.LogInformation($"Retrieve TodoItem by Id:{id}");
             // Retrieve the Item.
-            return await _context.LoadAsync<TodoItem>(id, type);
+            return await _context.LoadAsync<TodoItemEntity>(id, type);
         }
 
-        public async Task CreateAsync(TodoItem item)
+        public async Task CreateAsync(TodoItemEntity item)
         {
             _logger.LogInformation($"Save TodoItem by Id:{item.Id}");
             // Save the Item.
@@ -34,28 +34,28 @@ namespace TodoApi.Repository
 
         public async Task Delete(long id)
         {
-            _logger.LogInformation($"Delete TodoItem by Id:{id}");      
+            _logger.LogInformation($"Delete TodoItem by Id:{id}");
             // Delete the Item.
-            await _context.DeleteAsync<TodoItem>(id);
+            await _context.DeleteAsync<TodoItemEntity>(id);
         }
 
-        public async Task Update(long id, TodoItem item)
+        public async Task Update(long id, TodoItemEntity item)
         {
-            _logger.LogInformation($"Update TodoItem by Id:{id}"); 
+            _logger.LogInformation($"Update TodoItem by Id:{id}");
             // Retrieve the item.
-            var itemRetrieved = await _context.LoadAsync<TodoItem>(id, NOTE);
-            
+            var itemRetrieved = await _context.LoadAsync<TodoItemEntity>(id, NOTE);
+
             itemRetrieved.Type = NOTE;
             itemRetrieved.Name = item.Name;
             itemRetrieved.IsComplete = item.IsComplete;
             await _context.SaveAsync(itemRetrieved);
         }
 
-        public async Task<IEnumerable<TodoItem>> GetAllAsync()
+        public async Task<IEnumerable<TodoItemEntity>> GetAllAsync()
         {
             _logger.LogInformation("Retrieve All TodoItem");
 
-            var items = await _context.ScanAsync<TodoItem>(new List<ScanCondition>(){
+            var items = await _context.ScanAsync<TodoItemEntity>(new List<ScanCondition>(){
                     new ScanCondition("Type", ScanOperator.Equal, NOTE)
                 }).GetRemainingAsync();
 

@@ -1,9 +1,9 @@
 using Amazon.DynamoDBv2.DataModel;
 
-namespace TodoApi.Repository
+namespace TodoApi.Domain.Repository
 {
     [DynamoDBTable("TodoItems")]
-    public class TodoItem
+    public class TodoItemEntity
     {
         [DynamoDBHashKey]
         public long Id { get; set; }
