@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "D:\\tools\\Miniconda3\\envs\\env3\\python.exe"
+    "python.pythonPath": "D:\\tools\\Miniconda3\\envs\\env3\\python.exe",
+    "dotnet-test-explorer.testProjectPath": "**/*Test*.@(csproj|vbproj|fsproj)"
 }

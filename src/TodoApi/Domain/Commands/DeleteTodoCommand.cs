@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -20,6 +21,8 @@ namespace TodoApi.Domain.Commands
         }
         protected override async Task Handle(DeleteTodoCommand request, CancellationToken cancellationToken)
         {
+            if(request == null)
+                throw new ArgumentNullException($"{nameof(request)} is null");
             await _repository.Delete(request.Id);
         }
     }

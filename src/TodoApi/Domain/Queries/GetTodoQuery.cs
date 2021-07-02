@@ -21,7 +21,7 @@ namespace TodoApi.Domain.Queries
         }
         public async Task<TodoItem> Handle(GetTodoQuery request, CancellationToken cancellationToken)
         {
-            var item = (await _repository.GetByIdAsync(request.Id)).ToItem();
+            var item = (await _repository.GetByIdAsync(request.Id))?.ToItem();
             return item;
         }
     }

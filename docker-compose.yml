@@ -34,7 +34,7 @@ services:
         - overlay
   
   todo-api:
-      build: .
+      build: ./src/TodoApi
       ports:
         - "8080:80"
       environment:

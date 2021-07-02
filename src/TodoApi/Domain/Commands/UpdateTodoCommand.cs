@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -23,6 +24,9 @@ namespace TodoApi.Domain.Commands
         }
         protected override async Task Handle(UpdateTodoCommand request, CancellationToken cancellationToken)
         {
+            if(request == null)
+                throw new ArgumentNullException($"{nameof(request)} is null");
+                
              var todoItemEntity = new TodoItemEntity(){
                 Id = request.Id,
                 Type = request.Type,
