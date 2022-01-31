@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using TodoApi.Models;
+using TodoApi.Application.Models;
 using MediatR;
 using TodoApi.Domain.Commands;
 using TodoApi.Domain.Queries;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using TodoApi.Domain.Models;
 
-namespace TodoApi.Controllers
+namespace TodoApi.Application.Controllers
 {
     [Route("api/[controller]")]
     public class TodoController : Controller
@@ -69,6 +69,7 @@ namespace TodoApi.Controllers
         {
             try
             {
+                //TODO: Validate Requests
                 var todoCommand = new CreateTodoCommand(){
                     Id = itemRequest.Id,
                     Type = "Note",
@@ -92,6 +93,7 @@ namespace TodoApi.Controllers
         {
             try
             {
+                //TODO: Validate Requests
                 var todoCommand = new UpdateTodoCommand(){
                     Id = itemRequest.Id,
                     Type = "Note",

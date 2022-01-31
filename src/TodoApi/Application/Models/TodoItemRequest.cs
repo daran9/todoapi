@@ -1,6 +1,6 @@
-namespace TodoApi.Models
+namespace TodoApi.Application.Models
 {
-    public record TodoItemResponse
+    public record TodoItemRequest
     {
         public long Id { get; set; }
         public string Name { get; set; }

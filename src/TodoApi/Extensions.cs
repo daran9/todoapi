@@ -1,6 +1,7 @@
 using TodoApi.Domain.Models;
-using TodoApi.Domain.Repository;
-using TodoApi.Models;
+using TodoApi.Application.Models;
+using TodoApi.Infrastructure.Repository;
+using TodoApi.Domain.Commands;
 
 namespace TodoApi
 {
@@ -21,6 +22,27 @@ namespace TodoApi
                 Id = item.Id,
                 Name = item.Name,
                 IsComplete = item.IsComplete
+            };
+        }
+
+        public static TodoItem ToItem(this CreateTodoCommand request)
+        {
+            return new TodoItem(){
+                Id = request.Id,
+                Name = request.Name,
+                Type = request.Type,
+                IsComplete = request.IsComplete
+            };
+        }
+
+        
+        public static TodoItem ToItem(this UpdateTodoCommand request)
+        {
+            return new TodoItem(){
+                Id = request.Id,
+                Name = request.Name,
+                Type = request.Type,
+                IsComplete = request.IsComplete
             };
         }
     }

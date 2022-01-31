@@ -1,18 +1,19 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using TodoApi.Domain.Models;
 
 namespace TodoApi.Domain.Repository
 {
     public interface ITodoItemRepository
     {
-        Task<TodoItemEntity> GetByIdAsync(long id, string type = "Note");
+        Task<TodoItem> GetByIdAsync(long id, string type = "Note");
 
-        Task CreateAsync(TodoItemEntity item);
+        Task CreateAsync(TodoItem item);
 
         Task Delete(long id);
 
-        Task Update(long id, TodoItemEntity item);
+        Task Update(long id, TodoItem item);
 
-        Task<IEnumerable<TodoItemEntity>> GetAllAsync();
+        Task<IEnumerable<TodoItem>> GetAllAsync();
     }
 }

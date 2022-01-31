@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -22,8 +21,7 @@ namespace TodoApi.Domain.Queries
         }
         public async Task<IEnumerable<TodoItem>> Handle(GetTodoListQuery request, CancellationToken cancellationToken)
         {
-            var items = (await _repository.GetAllAsync()).Select(item => item.ToItem());
-            return items;
+            return await _repository.GetAllAsync();
         }
     }
 }

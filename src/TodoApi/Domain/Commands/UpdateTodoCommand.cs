@@ -27,14 +27,7 @@ namespace TodoApi.Domain.Commands
             if(request == null)
                 throw new ArgumentNullException($"{nameof(request)} is null");
                 
-             var todoItemEntity = new TodoItemEntity(){
-                Id = request.Id,
-                Type = request.Type,
-                Name = request.Name,
-                IsComplete = request.IsComplete
-            };
-
-            await _repository.Update(request.Id, todoItemEntity);
+            await _repository.Update(request.Id, request.ToItem());
         }
     }
 }

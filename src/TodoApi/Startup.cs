@@ -8,6 +8,7 @@ using Amazon.DynamoDBv2.DataModel;
 using Serilog;
 using MediatR;
 using TodoApi.Domain.Repository;
+using TodoApi.Infrastructure.Repository;
 
 namespace TodoApi
 {

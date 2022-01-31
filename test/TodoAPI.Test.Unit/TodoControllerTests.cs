@@ -1,15 +1,14 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
-using TodoApi.Controllers;
 using TodoApi.Domain.Models;
 using TodoApi.Domain.Queries;
 using Xunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using TodoApi.Application.Controllers;
 
 namespace TodoAPI.Test.Unit
 {

@@ -3,8 +3,11 @@ using Amazon.DynamoDBv2.DocumentModel;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using TodoApi.Domain.Repository;
+using TodoApi.Domain.Models;
+using System.Linq;
 
-namespace TodoApi.Domain.Repository
+namespace TodoApi.Infrastructure.Repository
 {
     public class DynamoDBTodoItemRepository : ITodoItemRepository
     {
@@ -18,14 +21,15 @@ namespace TodoApi.Domain.Repository
             _logger = logger;
         }
 
-        public async Task<TodoItemEntity> GetByIdAsync(long id, string type = NOTE)
+        public async Task<TodoItem> GetByIdAsync(long id, string type = NOTE)
         {
             _logger.LogInformation($"Retrieve TodoItem by Id:{id}");
             // Retrieve the Item.
-            return await _context.LoadAsync<TodoItemEntity>(id, type);
+            var items = await _context.LoadAsync<TodoItemEntity>(id, type);
+            return items.ToItem();
         }
 
-        public async Task CreateAsync(TodoItemEntity item)
+        public async Task CreateAsync(TodoItem item)
         {
             _logger.LogInformation($"Save TodoItem by Id:{item.Id}");
             // Save the Item.
@@ -39,7 +43,7 @@ namespace TodoApi.Domain.Repository
             await _context.DeleteAsync<TodoItemEntity>(id);
         }
 
-        public async Task Update(long id, TodoItemEntity item)
+        public async Task Update(long id, TodoItem item)
         {
             _logger.LogInformation($"Update TodoItem by Id:{id}");
             // Retrieve the item.
@@ -51,7 +55,7 @@ namespace TodoApi.Domain.Repository
             await _context.SaveAsync(itemRetrieved);
         }
 
-        public async Task<IEnumerable<TodoItemEntity>> GetAllAsync()
+        public async Task<IEnumerable<TodoItem>> GetAllAsync()
         {
             _logger.LogInformation("Retrieve All TodoItem");
 
@@ -59,7 +63,7 @@ namespace TodoApi.Domain.Repository
                     new ScanCondition("Type", ScanOperator.Equal, NOTE)
                 }).GetRemainingAsync();
 
-            return items;
+            return items.Select(x => x.ToItem());
         }
     }
 }

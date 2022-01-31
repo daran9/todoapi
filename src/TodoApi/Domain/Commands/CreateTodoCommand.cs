@@ -32,15 +32,9 @@ namespace TodoApi.Domain.Commands
             if(request == null)
                 throw new ArgumentNullException($"{nameof(request)} is null");
 
-            var todoItemEntity = new TodoItemEntity()
-            {
-                Id = request.Id,
-                Type = request.Type,
-                Name = request.Name,
-                IsComplete = request.IsComplete
-            };
-            await _repository.CreateAsync(todoItemEntity);
-            return todoItemEntity.ToItem();
+            var item = request.ToItem();
+            await _repository.CreateAsync(item);
+            return item;
         }
     }
 }

@@ -1,6 +1,6 @@
 using Amazon.DynamoDBv2.DataModel;
 
-namespace TodoApi.Domain.Repository
+namespace TodoApi.Infrastructure.Repository
 {
     [DynamoDBTable("TodoItems")]
     public class TodoItemEntity
