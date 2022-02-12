@@ -14,25 +14,23 @@ namespace TodoApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            Environment = environment;
         }
 
         private IConfiguration Configuration { get; }
 
-        private IWebHostEnvironment Environment{ get; }
 
         private const string HttpHostDockerInternal = "http://localstack:4566";
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services, IWebHostEnvironment environment)
         {
             //services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
             services.AddControllers();
 
-            if(Environment.IsDevelopment())
+            if(environment.IsDevelopment())
             {
                 services.AddSingleton<IAmazonDynamoDB>(sp =>
                 {   

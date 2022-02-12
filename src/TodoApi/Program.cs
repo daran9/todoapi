@@ -1,42 +1,41 @@
-﻿using System;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Builder;
+using TodoApi;
 using Serilog;
 using Serilog.Events;
+using System;
 
-namespace TodoApi
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateLogger();
+
+Log.Information("Starting up");
+
+try
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-            .Enrich.FromLogContext()
-            .WriteTo.Console()
-            .CreateLogger();
-            
-            try
-            {
-                Log.Information("Starting web host");
-                BuildWebHost(args).Run();
-                return;
-            }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "Host terminated unexpectedly");
-                return;
-            }
-            finally
-            {
-                Log.CloseAndFlush();
-            }           
-        }
+    var builder = WebApplication.CreateBuilder(args);
+    
+    builder.Host.UseSerilog();
 
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseSerilog()
-                .UseStartup<Startup>()
-                .Build();
-    }
+    var startup = new Startup(builder.Configuration);
+
+    var app = builder.Build();
+
+    startup.ConfigureServices(builder.Services, app.Environment);
+
+    startup.Configure(app, app.Environment);
+
+    app.Run();
 }
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Host terminated unexpectedly");
+}
+finally
+{
+    Log.Information("Shut down complete");
+    Log.CloseAndFlush();
+}  
+
+
