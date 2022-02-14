@@ -7,7 +7,7 @@ namespace TodoApi
 {
     public static class Extensions
     {
-        public static TodoItemResponse ToResponse(this TodoItem item)
+        public static TodoItemResponse ToResponse(this Todo item)
         {
             return new TodoItemResponse(){
                 Id = item.Id,
@@ -16,18 +16,18 @@ namespace TodoApi
             };
         }
 
-        public static TodoItem ToItem(this TodoItemEntity item)
+        public static Todo ToTodo(this TodoEntity item)
         {
-            return new TodoItem(){
-                Id = item.Id,
+            return new Todo(){
+                Id = new TodoId(item.Id),
                 Name = item.Name,
                 IsComplete = item.IsComplete
             };
         }
 
-        public static TodoItem ToItem(this CreateTodoCommand request)
+        public static Todo ToTodo(this CreateTodoCommand request)
         {
-            return new TodoItem(){
+            return new Todo(){
                 Id = request.Id,
                 Name = request.Name,
                 Type = request.Type,
@@ -36,9 +36,9 @@ namespace TodoApi
         }
 
         
-        public static TodoItem ToItem(this UpdateTodoCommand request)
+        public static Todo ToTodo(this UpdateTodoCommand request)
         {
-            return new TodoItem(){
+            return new Todo(){
                 Id = request.Id,
                 Name = request.Name,
                 Type = request.Type,

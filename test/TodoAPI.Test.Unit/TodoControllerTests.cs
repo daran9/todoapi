@@ -20,14 +20,14 @@ namespace TodoAPI.Test.Unit
             // Act
             var mediatorStub = new Mock<IMediator>();
             mediatorStub.Setup(m => m.Send(It.IsAny<GetTodoQuery>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((TodoItem)null);
+                .ReturnsAsync((Todo)null);
 
             var loggerStub = new Mock<ILogger<TodoController>>();
 
             var controller = new TodoController(mediatorStub.Object, loggerStub.Object);
             
             // Arrange
-            var result = await controller.GetByIdAsync(100);
+            var result = await controller.GetByIdAsync(TodoId.New());
 
             // Assert
             result.Result.Should().BeOfType<NotFoundResult>();

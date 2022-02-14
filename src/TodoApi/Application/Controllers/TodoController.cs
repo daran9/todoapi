@@ -26,7 +26,7 @@ namespace TodoApi.Application.Controllers
         [HttpGet]
         public async IAsyncEnumerable<Models.TodoItemResponse> GetAllAsync()
         {
-            IEnumerable<TodoItem> items;
+            IEnumerable<Todo> items;
             try
             {
                 var todoCommand = new GetTodoListQuery();
@@ -45,7 +45,7 @@ namespace TodoApi.Application.Controllers
         }
 
         [HttpGet("{id}", Name = "GetTodo")]
-        public async Task<ActionResult<Models.TodoItemResponse>> GetByIdAsync(long id)
+        public async Task<ActionResult<Models.TodoItemResponse>> GetByIdAsync(TodoId id)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace TodoApi.Application.Controllers
             {
                 //TODO: Validate Requests
                 var todoCommand = new CreateTodoCommand(){
-                    Id = itemRequest.Id,
+                    Id = TodoId.New(),
                     Type = "Note",
                     Name = itemRequest.Name,
                     IsComplete = itemRequest.IsComplete
@@ -89,13 +89,13 @@ namespace TodoApi.Application.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(long id, [FromBody] TodoItemRequest itemRequest)
+        public async Task<IActionResult> UpdateAsync(TodoId id, [FromBody] TodoItemRequest itemRequest)
         {
             try
             {
                 //TODO: Validate Requests
                 var todoCommand = new UpdateTodoCommand(){
-                    Id = itemRequest.Id,
+                    Id = id,
                     Type = "Note",
                     Name = itemRequest.Name,
                     IsComplete = itemRequest.IsComplete
@@ -112,7 +112,7 @@ namespace TodoApi.Application.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(long id)
+        public async Task<IActionResult> DeleteAsync(TodoId id)
         {
             try
             {

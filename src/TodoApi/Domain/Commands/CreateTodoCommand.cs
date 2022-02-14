@@ -8,31 +8,31 @@ using TodoApi.Domain.Repository;
 
 namespace TodoApi.Domain.Commands
 {
-    public class CreateTodoCommand : IRequest<TodoItem>
+    public class CreateTodoCommand : IRequest<Todo>
     {
-        public long Id { get; set; }
+        public TodoId Id { get; set; }
         public string Type { get; set; }
         public string Name { get; set; }
         public bool IsComplete { get; set; }
     }
 
-    public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, TodoItem>
+    public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, Todo>
     {
-        private readonly ITodoItemRepository _repository;
+        private readonly ITodoRepository _repository;
         private readonly ILogger<CreateTodoCommandHandler> _logger;
 
-        public CreateTodoCommandHandler(ITodoItemRepository repository, ILogger<CreateTodoCommandHandler> logger)
+        public CreateTodoCommandHandler(ITodoRepository repository, ILogger<CreateTodoCommandHandler> logger)
         {
             _repository = repository;
             _logger = logger;
         }
 
-        public async Task<TodoItem> Handle(CreateTodoCommand request, CancellationToken cancellationToken)
+        public async Task<Todo> Handle(CreateTodoCommand request, CancellationToken cancellationToken)
         {
             if(request == null)
                 throw new ArgumentNullException($"{nameof(request)} is null");
 
-            var item = request.ToItem();
+            var item = request.ToTodo();
             await _repository.CreateAsync(item);
             return item;
         }

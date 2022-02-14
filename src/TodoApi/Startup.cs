@@ -45,7 +45,7 @@ namespace TodoApi
             }
 
             services.AddSingleton<IDynamoDBContext, DynamoDBContext>();
-            services.AddTransient<ITodoItemRepository, DynamoDBTodoItemRepository>();
+            services.AddTransient<ITodoRepository, DynamoDBTodoRepository>();
 
             services.AddHealthChecks()
                 .AddCheck<TodoHealthCheck>("todo_health_check");

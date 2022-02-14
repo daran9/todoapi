@@ -6,20 +6,20 @@ using TodoApi.Domain.Repository;
 
 namespace TodoApi.Domain.Queries
 {
-    public class GetTodoQuery : IRequest<TodoItem>
+    public class GetTodoQuery : IRequest<Todo>
     {
-        public long Id { get; set; }
+        public TodoId Id { get; set; }
     }
 
-    public class GetTodoQueryHandler : IRequestHandler<GetTodoQuery, TodoItem>
+    public class GetTodoQueryHandler : IRequestHandler<GetTodoQuery, Todo>
     {
-        private readonly ITodoItemRepository _repository;
+        private readonly ITodoRepository _repository;
 
-        public GetTodoQueryHandler(ITodoItemRepository repository)
+        public GetTodoQueryHandler(ITodoRepository repository)
         {
             _repository = repository;
         }
-        public async Task<TodoItem> Handle(GetTodoQuery request, CancellationToken cancellationToken)
+        public async Task<Todo> Handle(GetTodoQuery request, CancellationToken cancellationToken)
         {
             return await _repository.GetByIdAsync(request.Id);
         }

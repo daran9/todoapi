@@ -2,20 +2,21 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using TodoApi.Domain.Models;
 using TodoApi.Domain.Repository;
 
 namespace TodoApi.Domain.Commands
 {
     public class DeleteTodoCommand : IRequest
     {
-        public long Id { get; set; }
+        public TodoId Id { get; set; }
     }
 
     public class DeleteTodoCommandHandler : AsyncRequestHandler<DeleteTodoCommand>
     {
-        private readonly ITodoItemRepository _repository;
+        private readonly ITodoRepository _repository;
 
-        public DeleteTodoCommandHandler(ITodoItemRepository repository)
+        public DeleteTodoCommandHandler(ITodoRepository repository)
         {
             _repository = repository;
         }

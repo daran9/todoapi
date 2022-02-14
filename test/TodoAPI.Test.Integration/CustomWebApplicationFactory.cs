@@ -16,7 +16,7 @@ namespace TodoAPI.Test.Integration
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureServices(services => services         
-                .OverrideService<ITodoItemRepository, InMemoryTodoItemRepository>(ServiceLifetime.Transient)
+                .OverrideService<ITodoRepository, InMemoryTodoRepository>(ServiceLifetime.Transient)
             );
         }
     }

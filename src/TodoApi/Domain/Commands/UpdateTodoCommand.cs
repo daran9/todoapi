@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 using MediatR;
 using TodoApi.Domain.Repository;
 using System.Collections.Generic;
+using TodoApi.Domain.Models;
 
 namespace TodoApi.Domain.Commands
 {
     public class UpdateTodoCommand : IRequest
     {
-        public long Id { get; set; }
+        public TodoId Id { get; set; }
         public string Type { get; set; }
         public string Name { get; set; }
         public bool IsComplete { get; set; }
@@ -17,9 +18,9 @@ namespace TodoApi.Domain.Commands
 
     public class UpdateTodoCommandHandler : AsyncRequestHandler<UpdateTodoCommand>
     {
-        private readonly ITodoItemRepository _repository;
+        private readonly ITodoRepository _repository;
 
-        public UpdateTodoCommandHandler(ITodoItemRepository repository)
+        public UpdateTodoCommandHandler(ITodoRepository repository)
         {
             _repository = repository;
         }
@@ -33,7 +34,7 @@ namespace TodoApi.Domain.Commands
             if(item == null)
                 throw new KeyNotFoundException($"{nameof(item)} is not found");
                   
-            await _repository.Update(request.Id, request.ToItem());
+            await _repository.Update(request.Id, request.ToTodo());
         }
     }
 }

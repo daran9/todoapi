@@ -26,17 +26,17 @@ namespace TodoAPI.Test.Integration.Domain
              // Arrange
               var createTodoCommand = new CreateTodoCommand()
             {
-                Id = 2, 
+                Id = TodoId.New(), 
                 Type = "test",
                 Name = "test", 
                 IsComplete = false
             };
             var createResult = await _mediator.Send(createTodoCommand);
-            createResult.Should().BeOfType<TodoItem>();
+            createResult.Should().BeOfType<Todo>();
 
             var updateTodoCommand = new UpdateTodoCommand()
             {
-                Id = 2,
+                Id = TodoId.New(),
                 Type = "test 2",
                 Name = "test 2", 
                 IsComplete = true

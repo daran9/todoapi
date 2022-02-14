@@ -1,8 +1,13 @@
+using StronglyTypedIds;
+
 namespace TodoApi.Domain.Models
 {
-    public record TodoItem
+    [StronglyTypedId]
+    public partial struct TodoId { }
+    
+    public record Todo
     {
-        public long Id { get; set; }
+        public TodoId Id { get; set; }
         public string Type { get; set; }
         public string Name { get; set; }
         public bool IsComplete { get; set; }
