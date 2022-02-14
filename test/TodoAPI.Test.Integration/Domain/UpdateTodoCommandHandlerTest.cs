@@ -10,11 +10,11 @@ using Xunit;
 
 namespace TodoAPI.Test.Integration.Domain
 {
-    public class CreateTodoCommandHandlerTest: IClassFixture<CustomWebApplicationFactory<Startup>>, IDisposable
+    public class UpdateTodoCommandHandlerTest: IClassFixture<CustomWebApplicationFactory<Startup>>, IDisposable
     {
         private IServiceScope _scope;
         private readonly IMediator _mediator;
-        public CreateTodoCommandHandlerTest(CustomWebApplicationFactory<Startup> factory)
+        public UpdateTodoCommandHandlerTest(CustomWebApplicationFactory<Startup> factory)
         {
             _scope = factory.Services.CreateScope();
             _mediator = _scope.ServiceProvider.GetRequiredService<IMediator>();
@@ -24,21 +24,30 @@ namespace TodoAPI.Test.Integration.Domain
         public async Task CreateTodoCommandHandler_Should_Handle_CreateTodoCommandAsync()
         {
              // Arrange
-            var todoCommand = new CreateTodoCommand()
+              var createTodoCommand = new CreateTodoCommand()
             {
-                Id = 1, 
+                Id = 2, 
                 Type = "test",
                 Name = "test", 
                 IsComplete = false
             };
+            var createResult = await _mediator.Send(createTodoCommand);
+            createResult.Should().BeOfType<TodoItem>();
+
+            var updateTodoCommand = new UpdateTodoCommand()
+            {
+                Id = 2,
+                Type = "test 2",
+                Name = "test 2", 
+                IsComplete = true
+            };
 
             //Act        
-            var result = await _mediator.Send(todoCommand);
+            var result = await _mediator.Send(updateTodoCommand);
 
             //Assert
-            result.Should().BeOfType<TodoItem>();
-            result.Id.Should().Be(todoCommand.Id);
-            result.Name.Should().Be(todoCommand.Name);
+            result.Should().NotBeNull();
+
         }
 
         public void Dispose()

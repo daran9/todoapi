@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using TodoApi.Domain.Repository;
+using System.Collections.Generic;
 
 namespace TodoApi.Domain.Commands
 {
@@ -24,9 +25,14 @@ namespace TodoApi.Domain.Commands
         }
         protected override async Task Handle(UpdateTodoCommand request, CancellationToken cancellationToken)
         {
+            //TODO: Change return type to Result<TodoItem>
             if(request == null)
                 throw new ArgumentNullException($"{nameof(request)} is null");
-                
+
+            var item = await _repository.GetByIdAsync(request.Id, request.Type);
+            if(item == null)
+                throw new KeyNotFoundException($"{nameof(item)} is not found");
+                  
             await _repository.Update(request.Id, request.ToItem());
         }
     }

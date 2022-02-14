@@ -20,9 +20,9 @@ try
 
     var startup = new Startup(builder.Configuration);
 
-    var app = builder.Build();
+    startup.ConfigureServices(builder.Services, builder.Environment);
 
-    startup.ConfigureServices(builder.Services, app.Environment);
+    var app = builder.Build();
 
     startup.Configure(app, app.Environment);
 
