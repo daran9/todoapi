@@ -1,18 +1,19 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using MediatR;
 using TodoApi.Domain.Models;
 using TodoApi.Domain.Repository;
 
 namespace TodoApi.Domain.Commands
 {
-    public class DeleteTodoCommand : IRequest
+    public class DeleteTodoCommand : IRequest<Result>
     {
         public TodoId Id { get; set; }
     }
 
-    public class DeleteTodoCommandHandler : AsyncRequestHandler<DeleteTodoCommand>
+    public class DeleteTodoCommandHandler : IRequestHandler<DeleteTodoCommand, Result>
     {
         private readonly ITodoRepository _repository;
 
@@ -20,11 +21,11 @@ namespace TodoApi.Domain.Commands
         {
             _repository = repository;
         }
-        protected override async Task Handle(DeleteTodoCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DeleteTodoCommand request, CancellationToken cancellationToken)
         {
             if(request == null)
                 throw new ArgumentNullException($"{nameof(request)} is null");
-            await _repository.Delete(request.Id);
+            return await _repository.Delete(request.Id);
         }
     }
 }
