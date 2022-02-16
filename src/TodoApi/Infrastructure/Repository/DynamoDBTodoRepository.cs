@@ -6,6 +6,10 @@ using Microsoft.Extensions.Logging;
 using TodoApi.Domain.Repository;
 using TodoApi.Domain.Models;
 using System.Linq;
+using CSharpFunctionalExtensions;
+using Amazon.DynamoDBv2;
+using Amazon.Runtime;
+using System;
 
 namespace TodoApi.Infrastructure.Repository
 {
@@ -21,49 +25,93 @@ namespace TodoApi.Infrastructure.Repository
             _logger = logger;
         }
 
-        public async Task<Todo> GetByIdAsync(TodoId id, string type = NOTE)
+        public async Task<Result<Todo>> GetByIdAsync(TodoId id, string type = NOTE)
+            => await HandleException(async () =>
+                {
+                    _logger.LogInformation($"Retrieve Todo by Id:{id}");
+                    // Retrieve the Item.
+                    var todos = await _context.LoadAsync<TodoEntity>(id, type);
+                    return Result.Success(todos.ToTodo());
+                });
+
+        public async Task<Result> CreateAsync(Todo todo)
+            => await HandleException(async () => 
+                { 
+                    _logger.LogInformation($"Save Todo by Id:{todo.Id}");
+                    // Save the Item.
+                    await _context.SaveAsync(todo);
+                    return Result.Success();
+                });
+
+        public async Task<Result> Delete(TodoId id)
+            => await HandleException(async () =>       
+                {
+                    _logger.LogInformation($"Delete Todo by Id:{id}");
+                    // Delete the Item.
+                    await _context.DeleteAsync<TodoEntity>(id);
+                    return Result.Success();
+                });
+
+        public async Task<Result> Update(TodoId id, Todo todo) 
+            => await HandleException(async () =>
+                {
+
+                    _logger.LogInformation($"Update Todo by Id:{id}");
+                    // Retrieve the item.
+                    var itemRetrieved = await _context.LoadAsync<TodoEntity>(id, NOTE);
+
+                    itemRetrieved.Type = NOTE;
+                    itemRetrieved.Name = todo.Name;
+                    itemRetrieved.IsComplete = todo.IsComplete;
+                    await _context.SaveAsync(itemRetrieved);
+                    return Result.Success();
+                });
+
+        public async Task<Result<IEnumerable<Todo>>> GetAllAsync() 
+            => await HandleException(async () =>
+                {
+                    _logger.LogInformation("Retrieve All Todos");
+
+                    var todos = await _context.ScanAsync<TodoEntity>(new List<ScanCondition>(){
+                            new ScanCondition("Type", ScanOperator.Equal, NOTE)
+                        }).GetRemainingAsync();
+
+                    return Result.Success(todos.Select(x => x.ToTodo()));
+                });
+
+        private async Task<Result<T>> HandleException<T>(Func<Task<Result<T>>> dbOperation)
         {
-            _logger.LogInformation($"Retrieve Todo by Id:{id}");
-            // Retrieve the Item.
-            var todos = await _context.LoadAsync<TodoEntity>(id, type);
-            return todos.ToTodo();
+            try
+            {
+                return await dbOperation();
+            }
+            catch (AmazonDynamoDBException e)
+            {
+                _logger.LogError(e.Message);
+                return Result.Failure<T>(e.Message);
+            }
+            catch (AmazonServiceException e)
+            {
+                _logger.LogError(e.Message);
+                return Result.Failure<T>(e.Message);
+            };
         }
-
-        public async Task CreateAsync(Todo todo)
+        private async Task<Result> HandleException(Func<Task<Result>> dbOperation)
         {
-            _logger.LogInformation($"Save Todo by Id:{todo.Id}");
-            // Save the Item.
-            await _context.SaveAsync(todo);
-        }
-
-        public async Task Delete(TodoId id)
-        {
-            _logger.LogInformation($"Delete Todo by Id:{id}");
-            // Delete the Item.
-            await _context.DeleteAsync<TodoEntity>(id);
-        }
-
-        public async Task Update(TodoId id, Todo todo)
-        {
-            _logger.LogInformation($"Update Todo by Id:{id}");
-            // Retrieve the item.
-            var itemRetrieved = await _context.LoadAsync<TodoEntity>(id, NOTE);
-
-            itemRetrieved.Type = NOTE;
-            itemRetrieved.Name = todo.Name;
-            itemRetrieved.IsComplete = todo.IsComplete;
-            await _context.SaveAsync(itemRetrieved);
-        }
-
-        public async Task<IEnumerable<Todo>> GetAllAsync()
-        {
-            _logger.LogInformation("Retrieve All Todos");
-
-            var todos = await _context.ScanAsync<TodoEntity>(new List<ScanCondition>(){
-                    new ScanCondition("Type", ScanOperator.Equal, NOTE)
-                }).GetRemainingAsync();
-
-            return todos.Select(x => x.ToTodo());
+            try
+            {
+                return await dbOperation();
+            }
+            catch (AmazonDynamoDBException e)
+            {
+                _logger.LogError(e.Message);
+                return Result.Failure(e.Message);
+            }
+            catch (AmazonServiceException e)
+            {
+                _logger.LogError(e.Message);
+                return Result.Failure(e.Message);
+            };
         }
     }
 }

@@ -3,12 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using TodoApi.Domain.Repository;
-using System.Collections.Generic;
 using TodoApi.Domain.Models;
+using CSharpFunctionalExtensions;
 
 namespace TodoApi.Domain.Commands
 {
-    public class UpdateTodoCommand : IRequest
+    public class UpdateTodoCommand : IRequest<Result<bool>>
     {
         public TodoId Id { get; set; }
         public string Type { get; set; }
@@ -16,7 +16,7 @@ namespace TodoApi.Domain.Commands
         public bool IsComplete { get; set; }
     }
 
-    public class UpdateTodoCommandHandler : AsyncRequestHandler<UpdateTodoCommand>
+    public class UpdateTodoCommandHandler : IRequestHandler<UpdateTodoCommand, Result<bool>>
     {
         private readonly ITodoRepository _repository;
 
@@ -24,17 +24,19 @@ namespace TodoApi.Domain.Commands
         {
             _repository = repository;
         }
-        protected override async Task Handle(UpdateTodoCommand request, CancellationToken cancellationToken)
+        public async Task<Result<bool>> Handle(UpdateTodoCommand request, CancellationToken cancellationToken)
         {
-            //TODO: Change return type to Result<TodoItem>
+            //TODO: Change bool to LinkedResource
             if(request == null)
                 throw new ArgumentNullException($"{nameof(request)} is null");
 
             var item = await _repository.GetByIdAsync(request.Id, request.Type);
-            if(item == null)
-                throw new KeyNotFoundException($"{nameof(item)} is not found");
+            if(item.IsFailure)
+                return Result.Failure<bool>($"{nameof(item)} is not found");
                   
             await _repository.Update(request.Id, request.ToTodo());
+
+            return Result.Success(true);
         }
     }
 }

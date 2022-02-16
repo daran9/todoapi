@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using TodoApi.Domain.Models;
 using TodoApi.Domain.Repository;
 
@@ -11,24 +12,36 @@ namespace TodoAPI.Test.Integration.Infrastructure.Repository
     {
         private readonly ConcurrentDictionary<TodoId, Todo> _todos = new ConcurrentDictionary<TodoId, Todo>();
 
-        public Task CreateAsync(Todo todo) 
-            => Task.FromResult(_todos.TryAdd(todo.Id, todo));
-
-        public Task Delete(TodoId id) 
-            => Task.FromResult(_todos.TryRemove(id, out Todo _));
-
-        public Task<IEnumerable<Todo>> GetAllAsync() 
-            => Task.FromResult(_todos.Values.AsEnumerable());
-
-        public Task<Todo> GetByIdAsync(TodoId id, string type = "Note") 
-            => Task.FromResult(_todos.TryGetValue(id, out Todo todo) ? todo : null);
-
-        public Task Update(TodoId id, Todo todo)
+        public Task<Result> CreateAsync(Todo todo) 
         {
-            if(_todos.TryGetValue(id, out Todo oldTodo))
-                _todos.TryUpdate(id, todo, oldTodo);
-            
-            return Task.CompletedTask;
+           return _todos.TryAdd(todo.Id, todo) 
+            ? Task.FromResult(Result.Success())
+            : Task.FromResult(Result.Failure("Todo already exists"));
+        }
+
+        public Task<Result> Delete(TodoId id) 
+        {
+            return _todos.TryRemove(id, out Todo _) 
+                ? Task.FromResult(Result.Success()) 
+                : Task.FromResult(Result.Failure("Todo not found"));
+        }
+
+        public Task<Result<IEnumerable<Todo>>> GetAllAsync() 
+            => Task.FromResult(Result.Success(_todos.Values.AsEnumerable()));
+
+        public Task<Result<Todo>> GetByIdAsync(TodoId id, string type = "Note") 
+            => _todos.TryGetValue(id, out var todo)
+                ? Task.FromResult(Result.Success(todo))
+                : Task.FromResult(Result.Failure<Todo>("Todo not found"));
+
+
+        public Task<Result> Update(TodoId id, Todo todo)
+        {
+            return _todos.TryGetValue(id, out var oldTodo) ? 
+                _todos.TryUpdate(id, todo, oldTodo)
+                    ? Task.FromResult(Result.Success()) 
+                    : Task.FromResult(Result.Failure("Todo not found"))
+                : Task.FromResult(Result.Failure("Todo not found"));
         }
     }
 }

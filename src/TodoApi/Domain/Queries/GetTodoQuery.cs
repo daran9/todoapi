@@ -1,17 +1,18 @@
 using System.Threading;
 using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using MediatR;
 using TodoApi.Domain.Models;
 using TodoApi.Domain.Repository;
 
 namespace TodoApi.Domain.Queries
 {
-    public class GetTodoQuery : IRequest<Todo>
+    public class GetTodoQuery : IRequest<Result<Todo>>
     {
         public TodoId Id { get; set; }
     }
 
-    public class GetTodoQueryHandler : IRequestHandler<GetTodoQuery, Todo>
+    public class GetTodoQueryHandler : IRequestHandler<GetTodoQuery, Result<Todo>>
     {
         private readonly ITodoRepository _repository;
 
@@ -19,7 +20,7 @@ namespace TodoApi.Domain.Queries
         {
             _repository = repository;
         }
-        public async Task<Todo> Handle(GetTodoQuery request, CancellationToken cancellationToken)
+        public async Task<Result<Todo>> Handle(GetTodoQuery request, CancellationToken cancellationToken)
         {
             return await _repository.GetByIdAsync(request.Id);
         }

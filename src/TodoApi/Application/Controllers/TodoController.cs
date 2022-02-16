@@ -25,19 +25,16 @@ namespace TodoApi.Application.Controllers
 
         [HttpGet]
         public async IAsyncEnumerable<Models.TodoItemResponse> GetAllAsync()
-        {
-            IEnumerable<Todo> items;
-            try
-            {
-                var todoCommand = new GetTodoListQuery();
-                items = await _mediator.Send(todoCommand);             
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error getting TodoItem!");
-                throw;
-            }
-            
+        {        
+            var items = await HandleException<IEnumerable<Todo>>(async () =>
+                {
+                   var todoCommand = new GetTodoListQuery();
+                    var itemsResult = await _mediator.Send(todoCommand);
+                    if(itemsResult.IsSuccess)
+                        return itemsResult.Value;
+                    return null;
+                }, "Error getting TodoItem");
+
             foreach (var item in items)
             {
                 yield return item.ToResponse();
@@ -46,83 +43,68 @@ namespace TodoApi.Application.Controllers
 
         [HttpGet("{id}", Name = "GetTodo")]
         public async Task<ActionResult<Models.TodoItemResponse>> GetByIdAsync(TodoId id)
-        {
-            try
+        => await HandleException<ActionResult<Models.TodoItemResponse>>(async () =>
             {
                 var todoCommand = new GetTodoQuery(){Id = id};
-                var item = await _mediator.Send(todoCommand);
-                if (item == null)
-                {
-                    return NotFound();
-                }
-                return item.ToResponse();
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error getting TodoItem!");
-                throw;
-            }
-        }
+                var todoResult = await _mediator.Send(todoCommand);
+                
+                return todoResult.IsSuccess 
+                    ? Ok(todoResult.Value.ToResponse()) 
+                    : NotFound();
+            }, "Error getting TodoItem!");
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] TodoItemRequest itemRequest)
-        {
-            try
-            {
-                //TODO: Validate Requests
-                var todoCommand = new CreateTodoCommand(){
-                    Id = TodoId.New(),
-                    Type = "Note",
-                    Name = itemRequest.Name,
-                    IsComplete = itemRequest.IsComplete
-                };
-    
-                var item = await _mediator.Send(todoCommand);
-            
-                return CreatedAtRoute("GetTodo", new { id = todoCommand.Id }, item.ToResponse());
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error creating TodoItem!");
-                throw;
-            }
-        }
+            => await HandleException<IActionResult>(async () =>
+                {
+                    //TODO: Validate Requests
+                    var todoCommand = new CreateTodoCommand(){
+                        Id = TodoId.New(),
+                        Type = "Note",
+                        Name = itemRequest.Name,
+                        IsComplete = itemRequest.IsComplete
+                    };
+        
+                    var item = await _mediator.Send(todoCommand);
+                
+                    return CreatedAtRoute("GetTodo", new { id = todoCommand.Id }, item.ToResponse());
+                }, "Error creating TodoItem!");
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(TodoId id, [FromBody] TodoItemRequest itemRequest)
-        {
-            try
-            {
-                //TODO: Validate Requests
-                var todoCommand = new UpdateTodoCommand(){
-                    Id = id,
-                    Type = "Note",
-                    Name = itemRequest.Name,
-                    IsComplete = itemRequest.IsComplete
-                };
+            => await HandleException<IActionResult>(async () =>
+                {
+                    //TODO: Validate Requests
+                    var todoCommand = new UpdateTodoCommand(){
+                        Id = id,
+                        Type = "Note",
+                        Name = itemRequest.Name,
+                        IsComplete = itemRequest.IsComplete
+                    };
 
-                await _mediator.Send(todoCommand);
-                return new NoContentResult();
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "Error Updating TodoItem!");
-                throw;
-            }
-        }
+                    var result = await _mediator.Send(todoCommand);
+                    return NoContent();
+                }, "Error Updating TodoItem!");
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(TodoId id)
+        public async Task<IActionResult> DeleteAsync(TodoId id) 
+            => await HandleException<IActionResult>(async () =>
+                {
+                    var todoCommand = new DeleteTodoCommand() { Id = id };
+                    var result = await _mediator.Send(todoCommand);
+                    return NoContent();
+                }, "Error deleting TodoItem!");
+
+        private async Task<T> HandleException<T>(Func<Task<T>> func, string errMsg)
         {
             try
             {
-                var todoCommand = new DeleteTodoCommand(){Id = id};
-                await _mediator.Send(todoCommand);
-                return new NoContentResult();
+                return await func();
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex, "Error deleting TodoItem!");
+                _logger.LogError(ex, errMsg);
                 throw;
             }
         }
