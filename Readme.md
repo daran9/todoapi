@@ -1,33 +1,50 @@
 # Todo API
 
-## Architecture
+## Overview
 
-Using DDD and CQRS
+Todo API allows the client to create, read, update and delete todo items.
+
+### Architecture
+
+The API is build using DDD and CQRS.
 
 For Persistence, uses DynamoDB
 
-HealthCheck
+For local development, uses LocalStack
+
+HealthCheck endpoints.
+
+### Dependencies
+
+1. [MediatR](https://github.com/jbogard/MediatR)
+1. [Fluent Assertions](https://fluentassertions.com/)
+1. [Fluent Validation](https://fluentvalidation.net/)
+1. [StronglyTypedId](https://github.com/andrewlock/StronglyTypedId)
+1. [CSharpFunctionalExtensions](https://github.com/vkhorikov/CSharpFunctionalExtensions)
+1. [LocalStack](https://localstack.cloud/)
 
 ### Build
 
-dotnet build
+`dotnet build build.proj`
 
 ### Tests
+
+`dotnet test`
 
 ## Using Docker
 
 ### Build App
 
-docker build -t todoapi .
+`docker build -t todoapi .`
 
-docker run -d -p 8080:80 --name todoapiapp todoapi
+`docker run -d -p 8080:80 --name todoapiapp todoapi`
 
 ### Remove App
 
-docker rm todoapiapp
+`docker rm todoapiapp`
 
 ## Using Docker Compose
 
-./run.sh
+`./run.sh`
 
-./stop.sh
+`./stop.sh`

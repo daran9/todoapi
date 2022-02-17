@@ -57,13 +57,7 @@ namespace TodoApi.Infrastructure.Repository
                 {
 
                     _logger.LogInformation($"Update Todo by Id:{id}");
-                    // Retrieve the item.
-                    var itemRetrieved = await _context.LoadAsync<TodoEntity>(id, NOTE);
-
-                    itemRetrieved.Type = NOTE;
-                    itemRetrieved.Name = todo.Name;
-                    itemRetrieved.IsComplete = todo.IsComplete;
-                    await _context.SaveAsync(itemRetrieved);
+                    await _context.SaveAsync(todo);
                     return Result.Success();
                 });
 

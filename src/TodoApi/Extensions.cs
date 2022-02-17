@@ -16,34 +16,22 @@ namespace TodoApi
             };
         }
 
-        public static Todo ToTodo(this TodoEntity item)
-        {
-            return new Todo(){
-                Id = new TodoId(item.Id),
-                Name = item.Name,
-                IsComplete = item.IsComplete
-            };
-        }
+        public static Todo ToTodo(this TodoEntity item) 
+            => new Todo(new TodoId(item.Id), new TodoType(item.TypeId, item.TypeName), item.Name, item.IsComplete);
 
         public static Todo ToTodo(this CreateTodoCommand request)
-        {
-            return new Todo(){
-                Id = request.Id,
-                Name = request.Name,
-                Type = request.Type,
-                IsComplete = request.IsComplete
-            };
-        }
+            => new Todo(request.Id, request.Type.ToType(), request.Name, request.IsComplete);
 
-        
-        public static Todo ToTodo(this UpdateTodoCommand request)
+
+        public static Todo ToTodo(this UpdateTodoCommand request) 
+            => new Todo(request.Id, request.Type.ToType(), request.Name, request.IsComplete);
+
+
+        public static TodoType ToType(this string typeName) 
         {
-            return new Todo(){
-                Id = request.Id,
-                Name = request.Name,
-                Type = request.Type,
-                IsComplete = request.IsComplete
-            };
+            if(TodoType.Note.Name == typeName)
+                return TodoType.Note;
+            return TodoType.None;
         }
     }
 }

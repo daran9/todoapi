@@ -3,10 +3,10 @@ cd $PWD
 
 export COMPOSE_DOCKER_CLI_BUILD=0
 
-docker-compose down --volumes --remove-orphans
+docker compose down --volumes --remove-orphans
 
-docker-compose build --force-rm --parallel --quiet
-docker-compose up --detach --force-recreate
+docker compose build --force-rm --parallel --quiet
+docker compose up --detach --force-recreate
 
 sleep 60
 

@@ -1,20 +1,33 @@
 using System;
 using Amazon.DynamoDBv2.DataModel;
+using TodoApi.Domain.Models;
 
 namespace TodoApi.Infrastructure.Repository
 {
     [DynamoDBTable("Todos")]
-    public class TodoEntity
+    public record TodoEntity
     {
         [DynamoDBHashKey]
-        public Guid Id { get; set; }
+        public Guid Id { get; init; }
         [DynamoDBRangeKey]
-        public string Type { get; set; }
+        public string TypeName { get; init; }   
         [DynamoDBProperty]
-        public string Name { get; set; }
+        public string TypeId { get; init; }
         [DynamoDBProperty]
-        public bool IsComplete { get; set; }
+        public string Name { get; init; }
+        [DynamoDBProperty]
+        public bool IsComplete { get; init; }
         [DynamoDBVersion]
-        public int? VersionNumber { get; set; }
+        public int? VersionNumber { get; init; }
+
+        public TodoEntity Create(Todo todo){
+            return new TodoEntity(){
+                Id = todo.Id.Value,
+                TypeName = todo.Type.Name,
+                TypeId = todo.Type.Id,
+                Name = todo.Name,
+                IsComplete = todo.IsComplete
+            };
+        }
     }
 }

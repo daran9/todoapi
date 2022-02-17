@@ -1,3 +1,4 @@
+using CSharpFunctionalExtensions;
 using StronglyTypedIds;
 
 namespace TodoApi.Domain.Models
@@ -5,11 +6,19 @@ namespace TodoApi.Domain.Models
     [StronglyTypedId]
     public partial struct TodoId { }
     
-    public record Todo
+    public class Todo : Entity<TodoId>
     {
-        public TodoId Id { get; set; }
-        public string Type { get; set; }
-        public string Name { get; set; }
-        public bool IsComplete { get; set; }
+        //TODO: Change to value Objects
+        public Todo(TodoId id, TodoType type, string name, bool isComplete)
+            : base(id)
+        {
+            Type = type;
+            Name = name;
+            IsComplete = isComplete;
+        }
+
+        public TodoType Type { get; private set; }
+        public string Name { get; private set; }
+        public bool IsComplete { get; private set; }
     }
 }
