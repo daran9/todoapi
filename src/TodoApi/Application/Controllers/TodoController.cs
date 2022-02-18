@@ -8,6 +8,7 @@ using TodoApi.Domain.Queries;
 using Microsoft.Extensions.Logging;
 using System;
 using TodoApi.Domain.Models;
+using System.Threading;
 
 namespace TodoApi.Application.Controllers
 {
@@ -24,12 +25,12 @@ namespace TodoApi.Application.Controllers
         }
 
         [HttpGet]
-        public async IAsyncEnumerable<Models.TodoItemResponse> GetAllAsync()
+        public async IAsyncEnumerable<Models.TodoResponse> GetAllAsync(CancellationToken cancellationToken = default)
         {        
             var items = await HandleException<IEnumerable<Todo>>(async () =>
                 {
                    var todoCommand = new GetTodoListQuery();
-                    var itemsResult = await _mediator.Send(todoCommand);
+                    var itemsResult = await _mediator.Send(todoCommand, cancellationToken);
                     if(itemsResult.IsSuccess)
                         return itemsResult.Value;
                     return null;
@@ -42,22 +43,23 @@ namespace TodoApi.Application.Controllers
         }
 
         [HttpGet("{id}", Name = "GetTodo")]
-        public async Task<ActionResult<Models.TodoItemResponse>> GetByIdAsync(TodoId id)
-        => await HandleException<ActionResult<Models.TodoItemResponse>>(async () =>
-            {
-                var todoCommand = new GetTodoQuery(){Id = id};
-                var todoResult = await _mediator.Send(todoCommand);
-                
-                return todoResult.IsSuccess 
-                    ? Ok(todoResult.Value.ToResponse()) 
-                    : NotFound();
-            }, "Error getting TodoItem!");
+        public async Task<ActionResult<Models.TodoResponse>> GetByIdAsync(TodoId id, 
+            CancellationToken cancellationToken = default)
+            => await HandleException<ActionResult<Models.TodoResponse>>(async () =>
+                {
+                    var todoCommand = new GetTodoQuery(){Id = id};
+                    var todoResult = await _mediator.Send(todoCommand, cancellationToken);
+                    
+                    return todoResult.IsSuccess 
+                        ? Ok(todoResult.Value.ToResponse()) 
+                        : NotFound();
+                }, "Error getting TodoItem!");
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] TodoItemRequest itemRequest)
+        public async Task<IActionResult> CreateAsync([FromBody] TodoRequest itemRequest,
+            CancellationToken cancellationToken = default)
             => await HandleException<IActionResult>(async () =>
                 {
-                    //TODO: Validate Requests
                     var todoCommand = new CreateTodoCommand(){
                         Id = TodoId.New(),
                         Type = "Note",
@@ -65,17 +67,17 @@ namespace TodoApi.Application.Controllers
                         IsComplete = itemRequest.IsComplete
                     };
         
-                    var item = await _mediator.Send(todoCommand);
+                    var item = await _mediator.Send(todoCommand, cancellationToken);
                 
                     return CreatedAtRoute("GetTodo", new { id = todoCommand.Id }, item.ToResponse());
                 }, "Error creating TodoItem!");
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(TodoId id, [FromBody] TodoItemRequest itemRequest)
+        public async Task<IActionResult> UpdateAsync(TodoId id, [FromBody] TodoRequest itemRequest,
+            CancellationToken cancellationToken = default)
             => await HandleException<IActionResult>(async () =>
                 {
-                    //TODO: Validate Requests
                     var todoCommand = new UpdateTodoCommand(){
                         Id = id,
                         Type = "Note",
@@ -83,7 +85,7 @@ namespace TodoApi.Application.Controllers
                         IsComplete = itemRequest.IsComplete
                     };
 
-                    var result = await _mediator.Send(todoCommand);
+                    var result = await _mediator.Send(todoCommand, cancellationToken);
                     return NoContent();
                 }, "Error Updating TodoItem!");
 

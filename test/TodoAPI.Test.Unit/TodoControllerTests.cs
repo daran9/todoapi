@@ -9,6 +9,7 @@ using Xunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using TodoApi.Application.Controllers;
+using CSharpFunctionalExtensions;
 
 namespace TodoAPI.Test.Unit
 {
@@ -20,7 +21,7 @@ namespace TodoAPI.Test.Unit
             // Act
             var mediatorStub = new Mock<IMediator>();
             mediatorStub.Setup(m => m.Send(It.IsAny<GetTodoQuery>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync((Todo)null);
+                .ReturnsAsync(Result.Failure<Todo>("Item not found"));
 
             var loggerStub = new Mock<ILogger<TodoController>>();
 

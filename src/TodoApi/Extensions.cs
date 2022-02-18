@@ -7,9 +7,9 @@ namespace TodoApi
 {
     public static class Extensions
     {
-        public static TodoItemResponse ToResponse(this Todo item)
+        public static TodoResponse ToResponse(this Todo item)
         {
-            return new TodoItemResponse(){
+            return new TodoResponse(){
                 Id = item.Id,
                 Name = item.Name,
                 IsComplete = item.IsComplete
