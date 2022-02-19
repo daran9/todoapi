@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using TodoApi.Domain.Models;
 using System.Threading;
+using Microsoft.AspNetCore.Http;
 
 namespace TodoApi.Application.Controllers
 {
@@ -24,7 +25,13 @@ namespace TodoApi.Application.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get all todo items
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async IAsyncEnumerable<Models.TodoResponse> GetAllAsync(CancellationToken cancellationToken = default)
         {        
             var items = await HandleException<IEnumerable<Todo>>(async () =>
@@ -42,7 +49,15 @@ namespace TodoApi.Application.Controllers
             }
         }
 
+        /// <summary>
+        /// Get todo by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpGet("{id}", Name = "GetTodo")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Models.TodoResponse>> GetByIdAsync(TodoId id, 
             CancellationToken cancellationToken = default)
             => await HandleException<ActionResult<Models.TodoResponse>>(async () =>
@@ -55,7 +70,15 @@ namespace TodoApi.Application.Controllers
                         : NotFound();
                 }, "Error getting TodoItem!");
 
+        /// <summary>
+        /// Create a todo
+        /// </summary>
+        /// <param name="itemRequest"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateAsync([FromBody] TodoRequest itemRequest,
             CancellationToken cancellationToken = default)
             => await HandleException<IActionResult>(async () =>
@@ -72,8 +95,16 @@ namespace TodoApi.Application.Controllers
                     return CreatedAtRoute("GetTodo", new { id = todoCommand.Id }, item.ToResponse());
                 }, "Error creating TodoItem!");
 
-
+        /// <summary>
+        /// Update a todo by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="itemRequest"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> UpdateAsync(TodoId id, [FromBody] TodoRequest itemRequest,
             CancellationToken cancellationToken = default)
             => await HandleException<IActionResult>(async () =>
@@ -89,7 +120,14 @@ namespace TodoApi.Application.Controllers
                     return NoContent();
                 }, "Error Updating TodoItem!");
 
+        /// <summary>
+        /// Delete a todo by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteAsync(TodoId id) 
             => await HandleException<IActionResult>(async () =>
                 {

@@ -21,6 +21,7 @@ HealthCheck endpoints.
 1. [Fluent Validation](https://fluentvalidation.net/)
 1. [StronglyTypedId](https://github.com/andrewlock/StronglyTypedId)
 1. [CSharpFunctionalExtensions](https://github.com/vkhorikov/CSharpFunctionalExtensions)
+1. [Swashbuckle](https://github.com/domaindrivendev/Swashbuckle.AspNetCore)
 1. [LocalStack](https://localstack.cloud/)
 
 ### Build
