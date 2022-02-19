@@ -10,7 +10,7 @@ namespace TodoApi
         public static TodoResponse ToResponse(this Todo item)
         {
             return new TodoResponse(){
-                Id = item.Id,
+                Id = item.Id.Value,
                 Name = item.Name,
                 IsComplete = item.IsComplete
             };

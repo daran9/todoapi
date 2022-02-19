@@ -30,7 +30,7 @@ namespace TodoApi.Infrastructure.Repository
                 {
                     _logger.LogInformation($"Retrieve Todo by Id:{id}");
                     // Retrieve the Item.
-                    var todos = await _context.LoadAsync<TodoEntity>(id, type);
+                    var todos = await _context.LoadAsync<TodoEntity>(id.Value, type);
                     return Result.Success(todos.ToTodo());
                 });
 
@@ -39,7 +39,7 @@ namespace TodoApi.Infrastructure.Repository
                 { 
                     _logger.LogInformation($"Save Todo by Id:{todo.Id}");
                     // Save the Item.
-                    await _context.SaveAsync(todo);
+                    await _context.SaveAsync(TodoEntity.Create(todo));
                     return Result.Success();
                 });
 
@@ -57,7 +57,7 @@ namespace TodoApi.Infrastructure.Repository
                 {
 
                     _logger.LogInformation($"Update Todo by Id:{id}");
-                    await _context.SaveAsync(todo);
+                    await _context.SaveAsync(TodoEntity.Create(todo));
                     return Result.Success();
                 });
 
@@ -67,7 +67,7 @@ namespace TodoApi.Infrastructure.Repository
                     _logger.LogInformation("Retrieve All Todos");
 
                     var todos = await _context.ScanAsync<TodoEntity>(new List<ScanCondition>(){
-                            new ScanCondition("Type", ScanOperator.Equal, NOTE)
+                            new ScanCondition("TypeName", ScanOperator.Equal, NOTE)
                         }).GetRemainingAsync();
 
                     return Result.Success(todos.Select(x => x.ToTodo()));

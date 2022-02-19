@@ -10,6 +10,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using TodoApi.Application.Controllers;
 using CSharpFunctionalExtensions;
+using System;
 
 namespace TodoAPI.Test.Unit
 {
@@ -28,7 +29,7 @@ namespace TodoAPI.Test.Unit
             var controller = new TodoController(mediatorStub.Object, loggerStub.Object);
             
             // Arrange
-            var result = await controller.GetByIdAsync(TodoId.New());
+            var result = await controller.GetByIdAsync(Guid.NewGuid());
 
             // Assert
             result.Result.Should().BeOfType<NotFoundResult>();

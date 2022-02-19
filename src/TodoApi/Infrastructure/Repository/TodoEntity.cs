@@ -20,7 +20,7 @@ namespace TodoApi.Infrastructure.Repository
         [DynamoDBVersion]
         public int? VersionNumber { get; init; }
 
-        public TodoEntity Create(Todo todo){
+        public static TodoEntity Create(Todo todo){
             return new TodoEntity(){
                 Id = todo.Id.Value,
                 TypeName = todo.Type.Name,

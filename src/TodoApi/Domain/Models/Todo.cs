@@ -1,11 +1,11 @@
-using System;
 using System.ComponentModel;
 using CSharpFunctionalExtensions;
 using StronglyTypedIds;
+using System.ComponentModel.DataAnnotations;
 
 namespace TodoApi.Domain.Models
 {
-    [StronglyTypedId]
+    [StronglyTypedId(converters: StronglyTypedIdConverter.SystemTextJson)]
     public partial struct TodoId { }
     
     public class Todo : Entity<TodoId>
@@ -26,9 +26,5 @@ namespace TodoApi.Domain.Models
         
         [DefaultValue(false)]
         public bool IsComplete { get; private set; }
-
-        private class RequiredAttribute : Attribute
-        {
-        }
     }
 }
