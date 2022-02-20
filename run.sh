@@ -18,13 +18,13 @@ export DEFAULT_REGION=eu-west-1
 
 echo "Creating Table..."
 aws --endpoint-url=http://localhost:4566 dynamodb create-table \
-    --table-name TodoItems \
+    --table-name Todos \
     --attribute-definitions \
-		AttributeName=Id,AttributeType=N \
-		AttributeName=Type,AttributeType=S \
+		AttributeName=Id,AttributeType=S \
+		AttributeName=TypeName,AttributeType=S \
     --key-schema \
 		AttributeName=Id,KeyType=HASH \
-		AttributeName=Type,KeyType=RANGE \
+		AttributeName=TypeName,KeyType=RANGE \
     --provisioned-throughput \
 		ReadCapacityUnits=5,WriteCapacityUnits=5 &> /dev/null
 echo "Done Creating Table."
