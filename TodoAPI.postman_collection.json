@@ -1,0 +1,143 @@
+{
+	"info": {
+		"_postman_id": "dc1a2d21-d8d7-4058-994a-376372e835e9",
+		"name": "TodoAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET - Todos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://192.168.1.9:8080/api/todo",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"9"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"todo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET - Todo Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://192.168.1.9:8080/api/todo/e7d27ca3-9182-4e6e-958d-9244d75e9b0e",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"9"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"todo",
+						"e7d27ca3-9182-4e6e-958d-9244d75e9b0e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Put - Todo Id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"feed dog\",\r\n    \"isComplete\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.11:8080/api/todo/e7d27ca3-9182-4e6e-958d-9244d75e9b0e",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"11"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"todo",
+						"e7d27ca3-9182-4e6e-958d-9244d75e9b0e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST - Todo",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"buy milk\",\r\n    \"isComplete\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.1.9:8080/api/todo",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"9"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"todo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://192.168.1.9:8080/health",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"1",
+						"9"
+					],
+					"port": "8080",
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
