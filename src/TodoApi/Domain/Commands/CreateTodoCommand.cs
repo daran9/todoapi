@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using TodoApi.Domain.Models;
@@ -8,7 +9,7 @@ using TodoApi.Domain.Repository;
 
 namespace TodoApi.Domain.Commands
 {
-    public class CreateTodoCommand : IRequest<Todo>
+    public class CreateTodoCommand : IRequest<Result<Todo>>
     {
         public TodoId Id { get; set; }
         public string Type { get; set; }
@@ -16,7 +17,7 @@ namespace TodoApi.Domain.Commands
         public bool IsComplete { get; set; }
     }
 
-    public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, Todo>
+    public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, Result<Todo>>
     {
         private readonly ITodoRepository _repository;
         private readonly ILogger<CreateTodoCommandHandler> _logger;
@@ -27,14 +28,16 @@ namespace TodoApi.Domain.Commands
             _logger = logger;
         }
 
-        public async Task<Todo> Handle(CreateTodoCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Todo>> Handle(CreateTodoCommand request, CancellationToken cancellationToken)
         {
             if(request == null)
                 throw new ArgumentNullException($"{nameof(request)} is null");
 
             var item = request.ToTodo();
-            await _repository.CreateAsync(item);
-            return item;
+            var result = await _repository.CreateAsync(item);
+            if(result.IsFailure)
+                return Result.Failure<Todo>(result.Error);
+            return Result.Success(item);
         }
     }
 }

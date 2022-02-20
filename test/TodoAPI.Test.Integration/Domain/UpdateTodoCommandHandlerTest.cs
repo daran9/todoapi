@@ -32,7 +32,8 @@ namespace TodoAPI.Test.Integration.Domain
                 IsComplete = false
             };
             var createResult = await _mediator.Send(createTodoCommand);
-            createResult.Should().BeOfType<Todo>();
+            createResult.IsSuccess.Should().BeTrue();
+            createResult.Value.Should().BeOfType<Todo>();
 
             var updateTodoCommand = new UpdateTodoCommand()
             {

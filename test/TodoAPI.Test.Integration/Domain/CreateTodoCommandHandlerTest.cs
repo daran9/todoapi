@@ -36,9 +36,10 @@ namespace TodoAPI.Test.Integration.Domain
             var result = await _mediator.Send(todoCommand);
 
             //Assert
-            result.Should().BeOfType<Todo>();
-            result.Id.Should().Be(todoCommand.Id);
-            result.Name.Should().Be(todoCommand.Name);
+            result.IsSuccess.Should().BeTrue();
+            result.Value.Should().BeOfType<Todo>();
+            result.Value.Id.Should().Be(todoCommand.Id);
+            result.Value.Name.Should().Be(todoCommand.Name);
         }
 
         public void Dispose()

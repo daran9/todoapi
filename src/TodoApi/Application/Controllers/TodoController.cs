@@ -37,7 +37,7 @@ namespace TodoApi.Application.Controllers
         {        
             var items = await HandleException<IEnumerable<Todo>>(async () =>
                 {
-                   var todoCommand = new GetTodoListQuery();
+                    var todoCommand = new GetTodoListQuery();
                     var itemsResult = await _mediator.Send(todoCommand, cancellationToken);
                     if(itemsResult.IsSuccess)
                         return itemsResult.Value;
@@ -91,9 +91,10 @@ namespace TodoApi.Application.Controllers
                         IsComplete = itemRequest.IsComplete
                     };
         
-                    var item = await _mediator.Send(todoCommand, cancellationToken);
-                
-                    return CreatedAtRoute("GetTodo", new { id = todoCommand.Id }, item.ToResponse());
+                    var todoResult = await _mediator.Send(todoCommand, cancellationToken);
+                    return todoResult.IsSuccess 
+                        ? CreatedAtRoute("GetTodo", new { id = todoCommand.Id }, todoResult.Value.ToResponse())
+                        : BadRequest(todoResult.Error);
                 }, "Error creating TodoItem!");
 
         /// <summary>
@@ -117,8 +118,10 @@ namespace TodoApi.Application.Controllers
                         IsComplete = itemRequest.IsComplete
                     };
 
-                    var result = await _mediator.Send(todoCommand, cancellationToken);
-                    return NoContent();
+                    var todoResult = await _mediator.Send(todoCommand, cancellationToken);
+                    return todoResult.IsSuccess 
+                        ? NoContent() 
+                        : BadRequest(todoResult.Error);
                 }, "Error Updating TodoItem!");
 
         /// <summary>
@@ -133,8 +136,10 @@ namespace TodoApi.Application.Controllers
             => await HandleException<IActionResult>(async () =>
                 {
                     var todoCommand = new DeleteTodoCommand() { Id = new TodoId(id) };
-                    var result = await _mediator.Send(todoCommand);
-                    return NoContent();
+                    var todoResult = await _mediator.Send(todoCommand);
+                    return todoResult.IsSuccess 
+                        ? NoContent() 
+                        : BadRequest(todoResult.Error);
                 }, "Error deleting TodoItem!");
 
         private async Task<T> HandleException<T>(Func<Task<T>> func, string errMsg)
