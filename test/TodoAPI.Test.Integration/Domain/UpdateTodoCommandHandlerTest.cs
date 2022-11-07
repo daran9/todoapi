@@ -10,11 +10,11 @@ using Xunit;
 
 namespace TodoAPI.Test.Integration.Domain
 {
-    public class UpdateTodoCommandHandlerTest: IClassFixture<CustomWebApplicationFactory<Startup>>, IDisposable
+    public class UpdateTodoCommandHandlerTest: IClassFixture<CustomWebApplicationFactory<Program>>, IDisposable
     {
         private IServiceScope _scope;
         private readonly IMediator _mediator;
-        public UpdateTodoCommandHandlerTest(CustomWebApplicationFactory<Startup> factory)
+        public UpdateTodoCommandHandlerTest(CustomWebApplicationFactory<Program> factory)
         {
             _scope = factory.Services.CreateScope();
             _mediator = _scope.ServiceProvider.GetRequiredService<IMediator>();

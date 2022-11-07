@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using TodoApi.Domain.Models;
 using TodoApi.Domain.Repository;
+using TodoApi.Extensions;
 
 namespace TodoApi.Domain.Commands
 {

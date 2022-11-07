@@ -5,6 +5,7 @@ using MediatR;
 using TodoApi.Domain.Repository;
 using TodoApi.Domain.Models;
 using CSharpFunctionalExtensions;
+using TodoApi.Extensions;
 
 namespace TodoApi.Domain.Commands
 {

@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using TodoApi;
+using TodoApi.Extensions;
 using Serilog;
 using Serilog.Events;
 using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -16,15 +19,40 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
     
+    builder.Configuration
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+        .AddEnvironmentVariables()
+        .AddUserSecrets<Program>()
+        .AddCommandLine(args)
+        .Build();
+
     builder.Host.UseSerilog();
+    builder.Services.AddControllers();
+    builder.Services.AddSwaggerGen();
+            
+    builder.Services.AddHealthChecks()
+        .AddCheck<TodoHealthCheck>("todo_health_check");
 
-    var startup = new Startup(builder.Configuration);
-
-    startup.ConfigureServices(builder.Services, builder.Environment);
+    builder.Services.AddDependencies(builder.Configuration, builder.Environment);
 
     var app = builder.Build();
 
-    startup.Configure(app, app.Environment);
+     if (app.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthorization();
+
+    app.MapControllers();
+    app.MapHealthChecks("/health");
+
+    app.UseSerilogRequestLogging();
 
     app.Run();
 }
@@ -38,4 +66,4 @@ finally
     Log.CloseAndFlush();
 }  
 
-
+public partial class Program { }

@@ -10,6 +10,7 @@ using CSharpFunctionalExtensions;
 using Amazon.DynamoDBv2;
 using Amazon.Runtime;
 using System;
+using TodoApi.Extensions;
 
 namespace TodoApi.Infrastructure.Repository
 {
