@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
-using TodoApi.Extensions;
-using Serilog;
-using Serilog.Events;
-using System;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
+using Serilog;
+using Serilog.Events;
+using TodoApi.Application.Extensions;
+using TodoApi.Web.HealthCheck;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -18,18 +19,18 @@ Log.Information("Starting up");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    
+
     builder.Configuration
-        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+        .AddJsonFile("appsettings.json", true, true)
         .AddEnvironmentVariables()
-        .AddUserSecrets<Program>()
+        .AddUserSecrets<TodoApi.Program>()
         .AddCommandLine(args)
         .Build();
 
     builder.Host.UseSerilog();
     builder.Services.AddControllers();
     builder.Services.AddSwaggerGen();
-            
+
     builder.Services.AddHealthChecks()
         .AddCheck<TodoHealthCheck>("todo_health_check");
 
@@ -37,7 +38,7 @@ try
 
     var app = builder.Build();
 
-     if (app.Environment.IsDevelopment())
+    if (app.Environment.IsDevelopment())
     {
         app.UseDeveloperExceptionPage();
 
@@ -64,6 +65,11 @@ finally
 {
     Log.Information("Shut down complete");
     Log.CloseAndFlush();
-}  
+}
 
-public partial class Program { }
+namespace TodoApi
+{
+    public class Program
+    {
+    }
+}

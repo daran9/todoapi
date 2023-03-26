@@ -1,20 +1,19 @@
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using TodoApi.Domain.Models;
+using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
+using TodoApi.Domain.Entities;
 
-namespace TodoApi.Domain.Repository
+namespace TodoApi.Domain.Repository;
+
+public interface ITodoRepository
 {
-    public interface ITodoRepository
-    {
-        Task<Result<Todo>> GetByIdAsync(TodoId id, string type = "Note");
+    Task<Result<Todo>> GetByIdAsync(TodoId id, string type = "Note");
 
-        Task<Result> CreateAsync(Todo todo);
+    Task<Result> CreateAsync(Todo todo);
 
-        Task<Result> Delete(TodoId id);
+    Task<Result> Delete(TodoId id);
 
-        Task<Result> Update(TodoId id, Todo todo);
+    Task<Result> Update(TodoId id, Todo todo);
 
-        Task<Result<IEnumerable<Todo>>> GetAllAsync();
-    }
+    Task<Result<IEnumerable<Todo>>> GetAllAsync();
 }

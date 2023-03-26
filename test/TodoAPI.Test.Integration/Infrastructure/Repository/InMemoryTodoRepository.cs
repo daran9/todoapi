@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using TodoApi.Domain.Models;
+using TodoApi.Domain.Entities;
 using TodoApi.Domain.Repository;
 
 namespace TodoAPI.Test.Integration.Infrastructure.Repository

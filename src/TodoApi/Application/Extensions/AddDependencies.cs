@@ -8,23 +8,25 @@ using Microsoft.Extensions.Hosting;
 using TodoApi.Domain.Repository;
 using TodoApi.Infrastructure.Repository;
 
-namespace TodoApi.Extensions;
+namespace TodoApi.Application.Extensions;
 
 public static class ServiceCollectionExtensions
 {
     private const string HttpHostDockerInternal = "http://localstack:4566";
-    public static IServiceCollection AddDependencies(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
+
+    public static IServiceCollection AddDependencies(this IServiceCollection services, IConfiguration configuration,
+        IWebHostEnvironment environment)
     {
         //services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
-         if(environment.IsDevelopment())
+        if (environment.IsDevelopment())
         {
             services.AddSingleton<IAmazonDynamoDB>(sp =>
-            {   
-                var clientConfig = new AmazonDynamoDBConfig{ ServiceURL = HttpHostDockerInternal };
+            {
+                var clientConfig = new AmazonDynamoDBConfig { ServiceURL = HttpHostDockerInternal };
                 return new AmazonDynamoDBClient(clientConfig);
             });
-
-        }else
+        }
+        else
         {
             services.AddDefaultAWSOptions(configuration.GetAWSOptions());
             services.AddAWSService<IAmazonDynamoDB>();

@@ -3,14 +3,14 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
-using TodoApi.Domain.Models;
-using TodoApi.Domain.Queries;
 using Xunit;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using TodoApi.Application.Controllers;
 using CSharpFunctionalExtensions;
 using System;
+using TodoApi.Application.Queries;
+using TodoApi.Domain.Entities;
+using TodoApi.Web.Controllers;
 
 namespace TodoAPI.Test.Unit
 {

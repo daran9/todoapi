@@ -4,9 +4,9 @@ using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using TodoApi;
-using TodoApi.Domain.Commands;
-using TodoApi.Domain.Models;
-using TodoApi.Domain.Queries;
+using TodoApi.Application.Commands;
+using TodoApi.Application.Queries;
+using TodoApi.Domain.Entities;
 using Xunit;
 
 namespace TodoAPI.Test.Integration.Domain

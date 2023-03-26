@@ -1,6 +1,6 @@
 using FluentAssertions;
 using FluentValidation.TestHelper;
-using TodoApi.Application.Models;
+using TodoApi.Web.Models;
 using Xunit;
 
 namespace TodoAPI.Test.Unit
