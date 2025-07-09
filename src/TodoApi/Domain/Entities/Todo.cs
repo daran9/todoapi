@@ -24,7 +24,9 @@ public class Todo : Entity<TodoId>
 
     public TodoType Type { get; }
 
-    [Required] public string Name { get; }
+    [Required] 
+    public string Name { get; }
 
-    [DefaultValue(false)] public bool IsComplete { get; }
+    [DefaultValue(false)] 
+    public bool IsComplete { get; }
 }

@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using MediatR;
+using Mediator;
 using TodoApi.Application.Extensions;
 using TodoApi.Domain.Entities;
 using TodoApi.Domain.Repository;
@@ -26,7 +26,7 @@ public class UpdateTodoCommandHandler : IRequestHandler<UpdateTodoCommand, Resul
         _repository = repository;
     }
 
-    public async Task<Result> Handle(UpdateTodoCommand request, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(UpdateTodoCommand request, CancellationToken cancellationToken)
     {
         //TODO: Change return result to LinkedResource
         if (request == null)

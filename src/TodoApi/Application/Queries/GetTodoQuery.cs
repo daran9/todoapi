@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using MediatR;
+using Mediator;
 using TodoApi.Domain.Entities;
 using TodoApi.Domain.Repository;
 
@@ -21,7 +21,7 @@ public class GetTodoQueryHandler : IRequestHandler<GetTodoQuery, Result<Todo>>
         _repository = repository;
     }
 
-    public async Task<Result<Todo>> Handle(GetTodoQuery request, CancellationToken cancellationToken)
+    public async ValueTask<Result<Todo>> Handle(GetTodoQuery request, CancellationToken cancellationToken)
     {
         return await _repository.GetByIdAsync(request.Id);
     }

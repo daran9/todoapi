@@ -16,7 +16,7 @@ namespace TodoApi.Infrastructure.Repository;
 
 public class DynamoDBTodoRepository : ITodoRepository
 {
-    private const string NOTE = "Note";
+    private const string Note = "Note";
     private readonly ILogger<DynamoDBTodoRepository> _logger;
     private readonly IDynamoDBContext _context;
 
@@ -26,7 +26,7 @@ public class DynamoDBTodoRepository : ITodoRepository
         _logger = logger;
     }
 
-    public async Task<Result<Todo>> GetByIdAsync(TodoId id, string type = NOTE)
+    public async Task<Result<Todo>> GetByIdAsync(TodoId id, string type = Note)
     {
         return await HandleException(async () =>
         {
@@ -77,7 +77,7 @@ public class DynamoDBTodoRepository : ITodoRepository
 
             var todos = await _context.ScanAsync<TodoDocument>(new List<ScanCondition>
             {
-                new("TypeName", ScanOperator.Equal, NOTE)
+                new("TypeName", ScanOperator.Equal, Note)
             }).GetRemainingAsync();
 
             return Result.Success(todos.Select(x => x.ToTodo()));

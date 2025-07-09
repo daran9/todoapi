@@ -17,15 +17,9 @@ public static class DtoExtensions
         };
     }
 
-    public static Todo ToTodo(this CreateTodoCommand request)
-    {
-        return new(request.Id, request.Type.ToType(), request.Name, request.IsComplete);
-    }
+    public static Todo ToTodo(this CreateTodoCommand request) => new(request.Id, request.Type.ToType(), request.Name, request.IsComplete);
 
-    public static Todo ToTodo(this UpdateTodoCommand request)
-    {
-        return new(request.Id, request.Type.ToType(), request.Name, request.IsComplete);
-    }
+    public static Todo ToTodo(this UpdateTodoCommand request) => new(request.Id, request.Type.ToType(), request.Name, request.IsComplete);
 
     private static TodoType ToType(this string typeName)
     {

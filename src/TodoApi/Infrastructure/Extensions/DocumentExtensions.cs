@@ -7,11 +7,9 @@ namespace TodoApi.Infrastructure.Extensions;
 
 public static class DocumentExtensions
 {
-    public static Todo ToTodo(this TodoDocument item)
-    {
-        return new(new TodoId(Guid.Parse(item.Pk)),
+    public static Todo ToTodo(this TodoDocument item) =>
+        new(new TodoId(Guid.Parse(item.Pk)),
             new TodoType(item.TypeId, item.Sk),
             item.Name,
             item.IsComplete);
-    }
 }

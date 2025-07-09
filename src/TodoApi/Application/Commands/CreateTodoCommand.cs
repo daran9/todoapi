@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using MediatR;
+using Mediator;
 using Microsoft.Extensions.Logging;
 using TodoApi.Application.Extensions;
 using TodoApi.Domain.Entities;
@@ -29,7 +29,7 @@ public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, Resul
         _logger = logger;
     }
 
-    public async Task<Result<Todo>> Handle(CreateTodoCommand request, CancellationToken cancellationToken)
+    public async ValueTask<Result<Todo>> Handle(CreateTodoCommand request, CancellationToken cancellationToken)
     {
         if (request == null)
             throw new ArgumentNullException($"{nameof(request)} is null");

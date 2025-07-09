@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using MediatR;
+using Mediator;
 using TodoApi.Domain.Entities;
 using TodoApi.Domain.Repository;
 
@@ -21,7 +21,7 @@ public class GetTodoListQueryHandler : IRequestHandler<GetTodoListQuery, Result<
         _repository = repository;
     }
 
-    public async Task<Result<IEnumerable<Todo>>> Handle(GetTodoListQuery request, CancellationToken cancellationToken)
+    public async ValueTask<Result<IEnumerable<Todo>>> Handle(GetTodoListQuery request, CancellationToken cancellationToken)
     {
         return await _repository.GetAllAsync();
     }

@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CSharpFunctionalExtensions;
-using MediatR;
+using Mediator;
 using TodoApi.Domain.Entities;
 using TodoApi.Domain.Repository;
 
@@ -22,7 +22,7 @@ public class DeleteTodoCommandHandler : IRequestHandler<DeleteTodoCommand, Resul
         _repository = repository;
     }
 
-    public async Task<Result> Handle(DeleteTodoCommand request, CancellationToken cancellationToken)
+    public async ValueTask<Result> Handle(DeleteTodoCommand request, CancellationToken cancellationToken)
     {
         if (request == null)
             throw new ArgumentNullException($"{nameof(request)} is null");
